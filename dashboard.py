@@ -39,6 +39,10 @@ for col in hourly.columns:
     arr = hourly[col].dropna().values
     st.write(f"{col}: shape={arr.shape}, ndim={arr.ndim}")
 
+    except Exception as e:
+    st.error(f"❌ Error fetching or processing data for {pair}: {e}")
+    continue
+
 
             result = analyze_pair(pair, daily, hourly)
             latest_close = hourly["Close"].iloc[-1]
