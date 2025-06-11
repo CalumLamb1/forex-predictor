@@ -33,6 +33,12 @@ with st.spinner("Fetching and analyzing data..."):
 
             daily = add_indicators(daily)
             hourly = add_indicators(hourly)
+            import numpy as np
+st.write(f"🔍 Checking column shapes for {pair}")
+for col in hourly.columns:
+    arr = hourly[col].dropna().values
+    st.write(f"{col}: shape={arr.shape}, ndim={arr.ndim}")
+
 
             result = analyze_pair(pair, daily, hourly)
             latest_close = hourly["Close"].iloc[-1]
