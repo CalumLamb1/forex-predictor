@@ -17,4 +17,5 @@ def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
 
     # Simple Moving Averages (SMA)
     df["SMA_20"] = ta.trend.sma_indicator(df["Close"], window=20).to_numpy().reshape(-1)
-    df["SMA_50"] = ta.trend.sma_indicator(df]()
+    df["SMA_50"] = ta.trend.sma_indicator(df["Close"], window=50).to_numpy().reshape(-1)
+
