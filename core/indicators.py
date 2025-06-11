@@ -1,14 +1,23 @@
 import pandas as pd
-import ta
+import ta  # Make sure 'ta' is installed
 
 def add_indicators(df):
-    df = df.copy()
-    df["EMA_50"] = ta.trend.ema_indicator(df["Close"].squeeze()
-    df["EMA_200"] = ta.trend.ema_indicator(df["Close"].squeeze()
-    macd, macd_signal, _ = ta.MACD(df["Close"].squeeze()
-df["MACD"] = macd.squeeze()
-df["MACD_signal"] = macd_signal.squeeze()
-    df["MACD_hist"] = ta.trend.macd_diff(df["Close"].squeeze()
-    df["RSI"] = ta.momentum.rsi(df["Close"].squeeze()
-    df["ATR"] = ta.volatility.average_true_range(df["High"], df["Low"], df["Close"].squeeze()
+    # Moving Averages
+    df["SMA_20"] = df["Close"].rolling(window=20).mean()
+    df["EMA_20"] = df["Close"].ewm(span=20).mean()
+    
+    # RSI
+    df["RSI"] = ta.momentum.rsi(df["Close"], window=14)
+
+    # MACD
+    df["MACD"] = ta.trend.macd(df["Close"]).squeeze()
+    df["MACD_signal"] = ta.trend.macd_signal(df["Close"]).squeeze()
+    df["MACD_hist"] = ta.trend.macd_diff(df["Close"]).squeeze()
+
+    # ATR
+    df["ATR"] = ta.volatility.average_true_range(
+        high=df["High"], low=df["Low"], close=df["Close"], window=14
+    )
+
     return df
+
