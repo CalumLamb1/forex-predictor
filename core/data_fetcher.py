@@ -12,17 +12,11 @@ def fetch_alpha_vantage(symbol):
     response = requests.get(url)
     data = response.json()
 
-    # Debugging output: show keys or error
-    print("🔍 API response keys:", data.keys())
-    if "Note" in data:
-        print("⚠️ API limit hit:", data["Note"])
-        return None
-    if "Error Message" in data:
-        print("❌ API error:", data["Error Message"])
-        return None
+    print(f"📡 Raw response for {symbol}:")
+    print(data)
 
     if "Time Series FX (60min)" not in data:
-        print("❌ 'Time Series FX (60min)' missing from response.")
+        print(f"❌ Missing 'Time Series FX (60min)' for {symbol}")
         return None
 
     df = pd.DataFrame.from_dict(data["Time Series FX (60min)"], orient="index", dtype=float)
