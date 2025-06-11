@@ -1,37 +1,32 @@
 import os
-import yfinance as yf
 import requests
 import pandas as pd
 from dotenv import load_dotenv
 
 load_dotenv()
+ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
 
-AV_KEY = os.getenv("ALPHA_VANTAGE_KEY")
-AV_URL = "https://www.alphavantage.co/query"
+def fetch_alpha_vantage(symbol):
+    url = f"https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol={symbol[:3]}&to_symbol={symbol[3:]}&interval=60min&apikey={ALPHA_VANTAGE_API_KEY}&outputsize=compact"
+    
+    response = requests.get(url)
+    data = response.json()
 
-def fetch_yahoo(pair, interval="1d", period="1y"):
-    ticker = pair + "=X"
-    df = yf.download(ticker, period=period, interval=interval)
-    df = df.rename(columns={"Volume":"Volume"})
-    return df
+    # Debugging output: show keys or error
+    print("🔍 API response keys:", data.keys())
+    if "Note" in data:
+        print("⚠️ API limit hit:", data["Note"])
+        return None
+    if "Error Message" in data:
+        print("❌ API error:", data["Error Message"])
+        return None
 
-def fetch_alpha_vantage(pair, interval="60min"):
-    params = {
-        "function": "FX_INTRADAY",
-        "from_symbol": pair[:3],
-        "to_symbol": pair[3:],
-        "interval": interval,
-        "apikey": AV_KEY,
-        "outputsize": "compact"
-    }
-    r = requests.get(AV_URL, params=params)
-    data = r.json()
-    key = f"Time Series FX ({interval})"
-    df = pd.DataFrame.from_dict(data[key], orient="index")
-    df = df.rename(columns={
-        "1. open":"Open","2. high":"High","3. low":"Low",
-        "4. close":"Close"
-    }).astype(float)
+    if "Time Series FX (60min)" not in data:
+        print("❌ 'Time Series FX (60min)' missing from response.")
+        return None
+
+    df = pd.DataFrame.from_dict(data["Time Series FX (60min)"], orient="index", dtype=float)
     df.index = pd.to_datetime(df.index)
+    df.columns = ["Open", "High", "Low", "Close"]
     df.sort_index(inplace=True)
     return df
