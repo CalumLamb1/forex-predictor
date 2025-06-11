@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import numpy as np
 from core.data_fetcher import fetch_yahoo
-from core.indicators import add_core.indicators
+from core.indicators import add_indicators
 from core.signal_logic import analyze_pair
 from core.tp_sl import calculate_tp_sl
 
