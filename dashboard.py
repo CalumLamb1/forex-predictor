@@ -13,9 +13,11 @@ st.markdown("This tool uses trend analysis + heuristics to generate trade signal
 # Load currency pairs
 with open("assets/pair_list.json") as f:
     pairs = json.load(f)
+    pairs = ["EURUSD"]  # Temporary override for testing
+
 
 # Choose data source
-source = st.selectbox("Choose Data Source", ["Yahoo Finance", "Alpha Vantage"])
+source = "Yahoo Finance"
 
 results = []
 
