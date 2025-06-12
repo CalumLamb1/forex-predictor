@@ -1,8 +1,6 @@
 import yfinance as yf
 
-def fetch_yahoo(pair, interval='1d', period='3mo'):
-    ticker = pair + "=X"
-    df = yf.download(ticker, interval=interval, period=period)
+def fetch_yahoo(ticker, period='6mo', interval='1d'):
+    df = yf.download(ticker, period=period, interval=interval)
     df.dropna(inplace=True)
-    df.reset_index(inplace=True)
     return df
