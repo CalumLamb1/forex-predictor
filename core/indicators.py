@@ -1,26 +1,24 @@
 import pandas as pd
-import ta
+import ta  # Make sure 'ta' is installed: pip install ta
 
-def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
-    # Ensure 'Close' is a Series, not DataFrame
-    close = df["Close"]
-    if isinstance(close, pd.DataFrame):
-        close = close.squeeze()  # convert to Series if needed
+def add_indicators(df):
+    df = df.copy()
 
-    df["MACD"] = ta.trend.macd(close)
-    df["MACD_signal"] = ta.trend.macd_signal(close)
-    df["MACD_hist"] = ta.trend.macd_diff(close)
+    # Ensure 'Close' column exists and is 1D
+    df["Close"] = df["Close"].astype(float)
 
-    df["RSI"] = ta.momentum.rsi(close)
+    # Add SMA
+    df["SMA_50"] = ta.trend.sma_indicator(df["Close"], window=50)
+    df["SMA_200"] = ta.trend.sma_indicator(df["Close"], window=200)
 
-    df["SMA_20"] = ta.trend.sma_indicator(close, window=20)
-    df["SMA_50"] = ta.trend.sma_indicator(close, window=50)
+    # Add RSI
+    df["RSI"] = ta.momentum.RSIIndicator(df["Close"], window=14).rsi()
 
-    df["EMA_20"] = ta.trend.ema_indicator(close, window=20)
-    df["EMA_50"] = ta.trend.ema_indicator(close, window=50)
+    # Add MACD
+    macd = ta.trend.MACD(df["Close"])
+    df["MACD"] = macd.macd()
+    df["MACD_Signal"] = macd.macd_signal()
+    df["MACD_Hist"] = macd.macd_diff()
 
-    bb = ta.volatility.BollingerBands(close, window=20, window_dev=2)
-    df["BB_upper"] = bb.bollinger_hband()
-    df["BB_lower"] = bb.bollinger_lband()
-
+    df.dropna(inplace=True)
     return df
