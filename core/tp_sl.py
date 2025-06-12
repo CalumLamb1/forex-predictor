@@ -1,8 +1,8 @@
-def calculate_tp_sl(entry, direction, atr):
-    if direction == "Buy":
-        sl = entry - 1.5 * atr
-        tp = entry + 3.0 * atr
-    else:
-        sl = entry + 1.5 * atr
-        tp = entry - 3.0 * atr
-    return round(tp, 5), round(sl, 5)
+def calculate_tp_sl(df):
+    last_price = df["Close"].iloc[-1]
+
+    # Simple fixed % strategy
+    take_profit = last_price * 1.005  # +0.5%
+    stop_loss = last_price * 0.995    # -0.5%
+
+    return take_profit, stop_loss
